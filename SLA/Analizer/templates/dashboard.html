@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}QBank-Dashboard{% endblock %}
+
+{% block content %}
+<div class="lg:mx-10 my-4 ">
+    <div class="mt-10">
+        <div class="max-w-full mx-auto">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Question Papers</h1>
+            </div>
+
+            <!-- Question Papers Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for paper in question_papers %}
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow  transform hover:translate-x-2 hover:scale-105 transition-all ease-in-out duration-600">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white my-head-text">{{ paper.title }}</h3>
+                            <span class="text-sm text-gray-500 dark:text-gray-400">{{ paper.year }}</span>
+                        </div>
+                        <div class="space-y-2">
+                            <p class="text-sm text-gray-600 dark:text-gray-400">
+                                <span class="font-medium text-gray-900 dark:text-white">Subject:</span> {{ paper.subject.name }}
+                            </p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">
+                                <span class="font-medium text-gray-900 dark:text-white">Code:</span> {{ paper.subject.code }}
+                            </p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">
+                                <span class="font-medium text-gray-900 dark:text-white">Semester:</span> {{ paper.semester }}
+                            </p>
+                        </div>
+                        <div class="mt-4">
+                            <a href="{{ paper.pdf_file.url }}" 
+                               target="_blank"
+                               class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 my-button">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                Download PDF
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-span-full text-center py-12">
+                    <p class="text-gray-500 dark:text-gray-400">No question papers available.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

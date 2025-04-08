@@ -1,0 +1,340 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="flex h-[calc(100vh-2rem)] bg-gray-50 dark:bg-gray-900">
+    <!-- Debug info -->
+    <script>
+        console.log('DEBUG: Template loading');
+    </script>
+    
+    <!-- Sidebar -->
+    <div class="w-64 bg-white dark:bg-gray-800 shadow-lg rounded-lg">
+        <div class="p-4">
+            <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Chat History</h2>
+            <button id="newChatBtn" class="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors">
+                New Chat
+            </button>
+        </div>
+        <div class="overflow-y-aut my-chat-history h-[calc(100%-180px)]">
+            {% for chat in chats %}
+            <div class="p-4 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer chat-item {% if chat.id == current_chat_id %}bg-gray-100 dark:bg-gray-700{% endif %}" data-chat-id="{{ chat.id }}">
+                <div class="flex items-center space-x-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-500 dark:text-gray-400">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
+                    </svg>
+                    <span class="text-sm text-gray-700 dark:text-gray-300">Chat {{ chat.id }}</span>
+                </div>
+                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ chat.updated_at|date:"M d, Y" }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Main Chat Area -->
+    <div class="flex-1 flex flex-col ml-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+        <!-- Chat Header -->
+        <div class="bg-white dark:bg-gray-800 shadow-sm p-4 rounded-t-lg">
+            <h1 class="text-xl font-semibold text-gray-800 dark:text-white">AI Assistant</h1>
+        </div>
+
+        <!-- Chat Messages -->
+        <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-4">
+            {% if current_chat_messages %}
+                {% for message in current_chat_messages %}
+                    <div class="flex {% if message.is_bot %}justify-start{% else %}justify-end{% endif %}">
+                        <div class="max-w-[70%] rounded-lg p-3 {% if message.is_bot %}bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white{% else %}bg-blue-500 text-white{% endif %}">
+                            {{ message.content }}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="flex items-center justify-center h-full">
+                    <div class="text-center text-gray-500 dark:text-gray-400">
+                        <p>No messages yet.</p>
+                        <p>Start a new chat or select an existing one.</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Chat Input -->
+        <div class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4 rounded-b-lg">
+            <form id="messageForm" class="flex space-x-4">
+                {% csrf_token %}
+                <input type="text" id="messageInput" 
+                       class="flex-1 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       placeholder="Type your message...">
+                <button type="submit" 
+                        class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                    Send
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+console.log('DEBUG: JavaScript block starting');
+
+// Debug info
+console.log('Template variables:', {
+    current_chat_id: '{{ current_chat_id|default:"none" }}',
+    has_chats: '{{ chats|yesno:"true,false" }}' === 'true',
+    chat_count: parseInt('{{ chats|length }}') || 0,
+    has_messages: '{{ current_chat_messages|yesno:"true,false" }}' === 'true'
+});
+
+let currentChatId = "{{ current_chat_id|default:'null' }}";
+if (currentChatId === "null") {
+    currentChatId = null;
+} else {
+    currentChatId = parseInt(currentChatId);
+}
+
+// Get CSRF token from the form
+let csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+console.log('DEBUG: CSRF token element found:', !!csrfToken);
+csrfToken = csrfToken ? csrfToken.value : null;
+console.log('DEBUG: CSRF token value exists:', !!csrfToken);
+
+function updateChatHistory(chatId) {
+    document.querySelectorAll('.chat-item').forEach(item => {
+        item.classList.remove('bg-gray-100', 'dark:bg-gray-700');
+        if (item.dataset.chatId === chatId.toString()) {
+            item.classList.add('bg-gray-100', 'dark:bg-gray-700');
+        }
+    });
+}
+
+function createNewChatHistoryItem(chatId) {
+    const chatList = document.querySelector('.my-chat-history');
+    const newChatItem = document.createElement('div');
+    newChatItem.className = 'p-4 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer chat-item bg-gray-100 dark:bg-gray-700';
+    newChatItem.dataset.chatId = chatId;
+    
+    const now = new Date();
+    newChatItem.innerHTML = `
+        <div class="flex items-center space-x-3">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-500 dark:text-gray-400">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
+            </svg>
+            <span class="text-sm text-gray-700 dark:text-gray-300">Chat ${chatId}</span>
+        </div>
+        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">${now.toLocaleDateString()}</div>
+    `;
+    
+    // Add click handler to new chat item
+    newChatItem.addEventListener('click', function() {
+        const chatId = this.dataset.chatId;
+        if (chatId === currentChatId.toString()) return;
+        loadChatMessages(chatId);
+    });
+    
+    // Insert at the beginning of the list
+    chatList.insertBefore(newChatItem, chatList.firstChild);
+}
+
+async function loadChatMessages(chatId) {
+    console.log('DEBUG: Loading messages for chat:', chatId);
+    try {
+        const response = await fetch('/chat/messages/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+            },
+            body: JSON.stringify({ chat_id: chatId })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('DEBUG: Messages loaded:', data);
+        
+        if (data.status === 'success') {
+            currentChatId = parseInt(chatId);
+            updateChatHistory(currentChatId);
+            
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = '';
+            
+            if (data.messages && data.messages.length > 0) {
+                data.messages.forEach(msg => {
+                    appendMessage(msg.content, msg.is_bot);
+                });
+            } else {
+                chatMessages.innerHTML = `
+                    <div class="flex items-center justify-center h-full">
+                        <div class="text-center text-gray-500 dark:text-gray-400">
+                            <p>No messages yet.</p>
+                            <p>Type a message to begin.</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+    } catch (error) {
+        console.error('Error loading messages:', error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DEBUG: DOM Content Loaded');
+    
+    // Get DOM elements
+    const newChatBtn = document.getElementById('newChatBtn');
+    const messageForm = document.getElementById('messageForm');
+    const messageInput = document.getElementById('messageInput');
+    const chatMessages = document.getElementById('chatMessages');
+    const chatItems = document.querySelectorAll('.chat-item');
+    
+    console.log('DEBUG: DOM Elements found:', {
+        newChatBtn: !!newChatBtn,
+        messageForm: !!messageForm,
+        messageInput: !!messageInput,
+        chatMessages: !!chatMessages,
+        chatItemsCount: chatItems.length
+    });
+
+    // Start new chat
+    newChatBtn.addEventListener('click', async function() {
+        console.log('DEBUG: New Chat button clicked');
+        try {
+            console.log('DEBUG: Sending new chat request');
+            const response = await fetch('/chat/start/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                }
+            });
+            
+            console.log('DEBUG: New chat response status:', response.status);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log('DEBUG: New chat created:', data);
+            
+            currentChatId = data.chat_id;
+            
+            // Update UI for new chat
+            createNewChatHistoryItem(currentChatId);
+            updateChatHistory(currentChatId);
+            
+            // Clear messages
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = `
+                <div class="flex items-center justify-center h-full">
+                    <div class="text-center text-gray-500 dark:text-gray-400">
+                        <p>New chat started.</p>
+                        <p>Type a message to begin.</p>
+                    </div>
+                </div>
+            `;
+        } catch (error) {
+            console.error('Error starting new chat:', error);
+            alert('Failed to start new chat. Please try again.');
+        }
+    });
+
+    // Handle chat item click
+    chatItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const chatId = this.dataset.chatId;
+            console.log('DEBUG: Chat item clicked:', chatId);
+            if (chatId === currentChatId.toString()) return;
+            loadChatMessages(chatId);
+        });
+    });
+
+    // Handle message submission
+    messageForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        console.log('DEBUG: Message form submitted');
+        
+        if (!currentChatId) {
+            console.log('DEBUG: No current chat ID');
+            alert('Please start a new chat first');
+            return;
+        }
+
+        const message = messageInput.value.trim();
+        if (!message) {
+            console.log('DEBUG: Empty message');
+            return;
+        }
+
+        console.log('DEBUG: Sending message:', {
+            chat_id: currentChatId,
+            message: message,
+            hasToken: !!csrfToken
+        });
+
+        // Add user message immediately
+        appendMessage(message, false);
+        messageInput.value = '';
+
+        try {
+            const response = await fetch('/chat/send/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({
+                    chat_id: currentChatId,
+                    message: message
+                })
+            });
+            
+            console.log('DEBUG: Message response status:', response.status);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log('DEBUG: Message response:', data);
+            
+            if (data.status === 'success') {
+                appendMessage(data.bot_response, true);
+            } else {
+                throw new Error(data.message || 'Unknown error');
+            }
+        } catch (error) {
+            console.error('Error sending message:', error);
+            alert('Error sending message: ' + error.message);
+        }
+    });
+});
+
+function appendMessage(content, isBot) {
+    console.log('DEBUG: Appending message:', { content, isBot });
+    const chatMessages = document.getElementById('chatMessages');
+    
+    // Remove the "No messages" placeholder if it exists
+    const placeholder = chatMessages.querySelector('.flex.items-center.justify-center.h-full');
+    if (placeholder) {
+        chatMessages.innerHTML = '';
+    }
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `flex ${isBot ? 'justify-start' : 'justify-end'}`;
+    
+    const messageBubble = document.createElement('div');
+    messageBubble.className = `max-w-[70%] rounded-lg p-3 ${
+        isBot ? 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white' : 'bg-blue-500 text-white'
+    }`;
+    messageBubble.textContent = content;
+    
+    messageDiv.appendChild(messageBubble);
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+</script>
+{% endblock %} 

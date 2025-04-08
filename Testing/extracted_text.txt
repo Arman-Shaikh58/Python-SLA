@@ -1,0 +1,192 @@
+
+
+--- Page 1 ---
+GOVERNMENT POLYTECHNIC, KOLHAPUR — 416004.
+(An Autonomous Institute of Govt. Of Maharashtra)
+WINTER 2024
+
+EXAM SEAT NO. — | [| yy
+LEVEL:- Third PROGRAM : Information Technology
+
+COURSE CODE :- ITH302
+COURSE NAME :- Computer Network
+
+; TR «2 2.
+MAN MARKS: JQ: TIME: 03 Hrs DATE 30/11/2024
+nstruction :-
+
+a sti swer book provided.
+
+1) Answers of two sections must be written in separate section answe I
+
+2) Mustrate your answers with sketches wherever necessal »
+
+3) Use of non-programmable pocket calculator 1S permissiDle. ,
+
+4) Mathematical and other tables shall be made available on request.
+
+5) Assume and mention suitable additional data 1f necessary.
+
+6) Use of Mobile is strictly prohibited. .
+
+7) QN- Question No., SQN-Sub Question No. R- Remembering, U- Understanding, A- Application.
+
+FQN TS R/ U/ | Co | Ma |
+N ks
+. A rks
+19 Question Texts | |
+| N |
+| Attempt any THREE: (2 X 3) lL —| 06
+a) | Define baud rate. = | TTHGO2-T jes |
+7 3 BK) 7
+List two advantages of mesh topology. R |_1TH302 ~ | |
+“rri2 |
+| c) | Differentiate between analog and digital signals. A ee 02
+d) | Define peer-to-peer processes in the OSImodel ER ITH302-3 | 02
+| e) | Enlist various networking devices. R | 1302-3 | 2
+| | | | |
+| ae a | a ‘
+1Q.2 | Attempt any FOUR: (4 X 4)
+Explain modes of data communication system.
+
+Draw & explain coaxial cable.
+
+U
+Explain star topology with neat diagram. U
+
+Differentiate between hub & switch
+
+Compare between physical address & logical address. |
+| A ITH302-3
+
+-_ oe
+| u | rrH302-3
+
+Explain functions of data link layer in OSI model.
+
+Attempt any TWO: (6 X 2)
+
+Compare between client-server & peer-to-peer architecture, A
+
+ITH302-1
+Differentiate between LAN, MAN, and WAN based on coverage area, 1
+; A | ITH302-2
+speed, and usage.
+
+P.T.O.
+
+: .
+With a neat diagram, explain the working of the OSI model. U | 1TH302-3 06 |
+
+| 1TH302-2 | 04 |
+A | 1TH302-3 | 04 |
+
+
+--- Page 2 ---
+————t—
+ET
+a, a
+ES ee
+
+GOVERNMENT POLY TEC TINEC, KOLHAPUR — 416004.
+(An Autonomous tastitate of Govt. Of Maharashtra)
+
+WINTER / SUMMER. 2024p a
+
+EXAM SEAT NO. F Lal ¢le [s fe |
+
+LEVEL :- Third PROGRAM : Information Technology
+COURSE CODE « IPH302
+COURSE NAME :- Computer Network
+MAX. MARKS : 70
+
+TIME ; 03 Hrs DATH 30/1/2024
+Tg | . U/ “rks
+LN | Question Text Alo
+| QF | Attempt any FOUR: (2 X 4) : _ | 8 |
+| | ~ ; a ~ . R _ — . Te a R 4
+__|b) | Define a piconet in Bluetooth communication, = 5 |
+.c) | List parts of IPv4, :
+
+| | d) Define Stream Socket & Datagram Socket, a ;
+[Te .| Explain the wale nee = . 5 Y :
+
+| le _| Explain the role of a User Agent (UA) in email communication. + :
+_f) | Define anonymous FTP, R! 6
+oo
+
+—
+
+1Q5 |) TAt
+
+Attempt any FOUR: (4X 4
+
+16
+| a) | Compare Single bit error and Brust error 4
+| b) | Consider the data unit to be transmitted is- 4 |
+| | 1001100111100010 9010010010000100
+
+|
+|
+| Consider 8-bit checksum is used. Calculate the checksum at the
+|
+|
+|
+
+—-—}+—
+
+Cc AA
+TT
+Ur}
+
+—{.
+
+>>
+
+sender’s side using 1’s complement arithmetic and verify it at the
+receiver’s end.
+
+'c) | Explain Classful addressing
+
+| d) / 1.You have a network with the IP address 192.168.10.0/24, Haw
+| | many subnets can you create if you use a subnet mask of /26?
+
+U| 5
+A
+
+rn
+
+|
+2. How many bits need to be borrowed to create 8 subnets from a |
+| /24 network?
+
+| €) | Differentiate between POP3 and IMAP in terms of how emails are | A
+
+handled.
+
+Briefly describe how MIME enhances the capabilities of email. | |
+EN A — | |
+
+| Attempt any TWO: (6 X 2) | |
+
+Elaborate on Hamming Code with an example. How are redundant | A 4
+
+bits calculated, and how do they help in detecting and correcting
+errors?
+
+oo
+
+- b) i Write Stream Socket Program i Al 5 [|
+c) | Explain the File Transfer Protocol (FTP) and its significance in U} 6
+
+| file sharing. Include a discussion on its various types mel |
+
+|
+
+12
+
+a)
+
+| anonymous FTP and FTP Secure.
+
+ME HC oe aK a ok ois a ake fe ake a

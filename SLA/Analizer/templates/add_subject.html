@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}QBank-Add Subject{% endblock %}
+
+{% block content %}
+<div class="lg:mx-64 my-4 ">
+    <div class="mt-10">
+        <div class="max-w-full mx-auto">
+            <!-- Breadcrumb -->
+            <nav class="flex mb-4" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="{% url 'dashboard' %}"
+                            class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
+                            <svg class="w-3 h-3 mr-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                    d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z" />
+                            </svg>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <svg class="w-3 h-3 text-gray-400 mx-1" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="m1 9 4-4-4-4" />
+                            </svg>
+                            <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400">Add
+                                Subject</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- Add Subject Form -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Add New Subject</h1>
+
+                {% if messages %}
+                <div class="space-y-2 mb-6">
+                    {% for message in messages %}
+                    <div class="p-4 text-sm rounded-lg {% if message.tags == 'error' %}text-red-800 bg-red-50 dark:bg-red-800/50 dark:text-red-400{% else %}text-green-800 bg-green-50 dark:bg-green-800/50 dark:text-green-400{% endif %}"
+                        role="alert">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <form method="POST" class="space-y-6">
+                    {% csrf_token %}
+
+                    <div class="grid grid-cols-1 gap-6">
+                        <!-- Name -->
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Subject
+                                Name</label>
+                            <input type="text" name="name" id="name" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        </div>
+
+                        <!-- Code -->
+                        <div>
+                            <label for="code" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Subject
+                                Code</label>
+                            <input type="text" name="code" id="code" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        </div>
+
+                        <!-- Semester -->
+                        <div>
+                            <label for="semister"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">Semester</label>
+                            <input type="text" name="semister" id="semister" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        </div>
+
+                        <!-- Description -->
+                        <div>
+                            <label for="description"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
+                            <textarea name="description" id="description" rows="4" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="flex justify-end">
+                            <button type="submit"
+                                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                Add Subject
+                            </button>
+                        </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

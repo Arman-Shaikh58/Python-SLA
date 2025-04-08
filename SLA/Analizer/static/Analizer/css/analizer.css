@@ -1,0 +1,38 @@
+.my-head-text{
+    transition: all 0.3s ease-in-out !important; 
+}
+.my-head-text:hover{
+    transform: scale(1.05) !important;
+}
+.my-head-text::after{
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background-color: #ffffff;
+    transition: all 0.3s ease-in-out;
+    transform: translateX(-50%);
+
+}
+.my-head-text:hover::after{
+    width: 100%;
+}
+.my-button{
+    transition: all 0.3s ease-in-out;
+
+}
+.my-button::before{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    transform: skew(-45%);
+    
+}
+.my-button:hover::before{
+    transform: skew(0deg);
+    left: 100%;
+}
