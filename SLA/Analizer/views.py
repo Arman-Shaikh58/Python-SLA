@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate,login,logout
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Subject,CustomUser,QuestionPaper, Chat, ChatMessage
+from .models import Subject,CustomUser,QuestionPaper, Chat, ChatMessage,Question
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 import json
@@ -175,6 +175,11 @@ def upload_question_paper(request, subject_id):
             text_output = extract_text_from_image_pdf(pdf_file)
             if text_output:
                 for question in text_output:
+                    Question.objects.create(
+                        question=question,
+                        question_paper=paper,
+                        question_type='extracted'  # Default type for extracted questions
+                    )
                     print(question)
             else:
                 messages.warning(request, "No questions were extracted from the PDF.")
@@ -238,7 +243,7 @@ def generate(msg, chat_history=None):
     if chat_history:
         for message in chat_history:
             role = "Assistant" if message.is_bot else "User"
-            context += f"{role}: {message.content}\n"
+            context += f"{message.content}\n"
 
     # Combine context with current message
     full_prompt = f"Previous conversation:\n{context}\nCurrent message: {msg}"

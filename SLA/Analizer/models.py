@@ -51,24 +51,6 @@ class Subject(models.Model):
     def __str__(self):
         return self.name
     
-class Exam(models.Model):
-    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
-    exam_name = models.CharField(max_length=255)
-    exam_date = models.DateField()
-    semister = models.IntegerField(default=1)
-
-    def __str__(self):
-        return self.exam_name
-    
-class Question(models.Model):
-    exam = models.ForeignKey(Exam, on_delete=models.CASCADE)
-    question = models.TextField()
-    question_type = models.CharField(max_length=255)
-    marks = models.IntegerField()
-    
-    def __str__(self):
-        return self.question
-    
 class QuestionPaper(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='question_papers')
     title = models.CharField(max_length=255)
@@ -79,6 +61,15 @@ class QuestionPaper(models.Model):
     
     def __str__(self):
         return f"{self.subject.code} - {self.title} ({self.year})"
+    
+class Question(models.Model):
+    question_paper = models.ForeignKey(QuestionPaper, on_delete=models.CASCADE, related_name='questions', null=True)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='questions', null=True)
+    question = models.TextField()
+    question_type = models.CharField(max_length=255)
+    
+    def __str__(self):
+        return self.question
     
 class Answer(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
