@@ -308,7 +308,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } catch (error) {
             console.error('Error sending message:', error);
-            alert('Error sending message: ' + error.message);
+            appendMessage('Sorry, there was an error processing your message. Please try again.', true);
         }
     });
 });
@@ -330,7 +330,10 @@ function appendMessage(content, isBot) {
     messageBubble.className = `max-w-[70%] rounded-lg p-3 ${
         isBot ? 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white' : 'bg-blue-500 text-white'
     }`;
-    messageBubble.textContent = content;
+    
+    // Handle multiline text and preserve formatting
+    const formattedContent = content.split('\n').map(line => `<div>${line}</div>`).join('');
+    messageBubble.innerHTML = formattedContent;
     
     messageDiv.appendChild(messageBubble);
     chatMessages.appendChild(messageDiv);

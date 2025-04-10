@@ -14,6 +14,10 @@ import re
 import os
 import tempfile
 import shutil
+import base64
+from google import genai
+from google.genai import types
+import mimetypes
 
 
 # Create your views here.
@@ -224,6 +228,49 @@ def start_chat(request):
     chat = Chat.objects.create(user=request.user)
     return JsonResponse({'chat_id': chat.id})
 
+def generate(msg, chat_history=None):
+    client = genai.Client(
+        api_key="AIzaSyCfnn4Q3bAA2AON_b8AUjd5UfYtl075duo",
+    )
+
+    # Prepare context from chat history
+    context = ""
+    if chat_history:
+        for message in chat_history:
+            role = "Assistant" if message.is_bot else "User"
+            context += f"{role}: {message.content}\n"
+
+    # Combine context with current message
+    full_prompt = f"Previous conversation:\n{context}\nCurrent message: {msg}"
+
+    model = "gemini-2.0-flash-exp-image-generation"
+    contents = [
+        types.Content(
+            role="user",
+            parts=[
+                types.Part.from_text(text=full_prompt),
+            ],
+        ),
+    ]
+    generate_content_config = types.GenerateContentConfig(
+        response_modalities=["text"],
+        response_mime_type="text/plain",
+    )
+
+    response_text = ""
+    for chunk in client.models.generate_content_stream(
+        model=model,
+        contents=contents,
+        config=generate_content_config,
+    ):
+        if not chunk.candidates or not chunk.candidates[0].content or not chunk.candidates[0].content.parts:
+            continue
+        if not chunk.candidates[0].content.parts[0].inline_data:
+            response_text += chunk.text
+
+    return response_text
+
+
 @login_required(login_url='login')
 @require_POST
 def send_message(request):
@@ -247,14 +294,15 @@ def send_message(request):
             is_bot=False
         )
         print(user_message)
+
+        # Get chat history for context
+        chat_history = ChatMessage.objects.filter(chat=chat).order_by('created_at')[:5]  # Last 5 messages for context
+        
+        # Generate bot response with context
+        bot_response = generate(message, chat_history)
+        
         # Update chat's last update time
         chat.save()  # This will update the updated_at field
-        
-        # Generate bot response (you can implement your own logic here)
-        if message=="Who is Arman":
-            bot_response="Arman is the person who created this website!:)"
-        else:
-            bot_response = "I'm your AI assistant. How can I help you today?"
         
         # Save bot response
         bot_message = ChatMessage.objects.create(
